@@ -1,5 +1,8 @@
-import fiftyone as fo
+"""Module to load and merge COCO datasets."""
+
 from pathlib import Path
+
+import fiftyone as fo
 
 
 def get_dataset(dataset_root: Path, annotation_fp: Path):
@@ -13,19 +16,19 @@ def get_dataset(dataset_root: Path, annotation_fp: Path):
     return dataset
 
 
-def merge_datasets(datasets: list[fo.Dataset]) -> fo.Dataset:
+def merge_datasets(dataset_list: list[fo.Dataset]) -> fo.Dataset:
     """
     Combine multiple datasets into a single dataset without changing any
     content.
     """
-    combined_dataset = fo.Dataset()
-    for dataset in datasets:
+    combined_dataset = fo.Dataset()  # Create an empty dataset to merge into
+    for dataset in dataset_list:
         combined_dataset.merge_samples(dataset)
     return combined_dataset
 
 
-if __name__ == "__main__":
-
+def main():
+    """Main function for testing the dataset module."""    
     datasets = []
     for split in ["train", "valid", "test"]:
         dataset_root = Path(f"data/{split}")
@@ -38,3 +41,7 @@ if __name__ == "__main__":
         print("=" * 80)
         print(sample.id)
         print(sample.filepath)
+
+
+if __name__ == "__main__":
+    main()
