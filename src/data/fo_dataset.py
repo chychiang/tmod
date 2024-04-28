@@ -27,21 +27,32 @@ def merge_datasets(dataset_list: list[fo.Dataset]) -> fo.Dataset:
     return combined_dataset
 
 
-def main():
-    """Main function for testing the dataset module."""    
+def load_all_splits(data_dir: Path, 
+                    subdir_names: list[str]) -> list[fo.Dataset]:
+    """Load all splits of a COCO dataset from the given parent directory."""
     datasets = []
-    for split in ["train", "valid", "test"]:
-        dataset_root = Path(f"data/{split}")
+    for split in subdir_names:
+        dataset_root = data_dir / split
         annotation_fp = dataset_root / "_annotations.coco.json"
         dataset = get_dataset(dataset_root, annotation_fp)
         datasets.append(dataset)
+    return datasets
 
-    combined_dataset = merge_datasets(datasets)
-    for sample in combined_dataset:
-        print("=" * 80)
-        print(sample.id)
-        print(sample.filepath)
 
+def load_all_splits_as_one(data_dir: Path,
+                           subdir_names: list[str]) -> fo.Dataset:
+    """
+    Load all splits of a COCO dataset from the given parent directory and 
+    merge them into one.
+    """
+    datasets = load_all_splits(data_dir, subdir_names)
+    return merge_datasets(datasets)
+
+def main():
+    """Main function for testing the dataset module."""    
+    dataset_root = Path("data")
+    dataset = load_all_splits_as_one(dataset_root, ["train", "valid", "test"])
+    print(f"Loaded dataset with {len(dataset)} samples.")
 
 if __name__ == "__main__":
     main()
